@@ -1,0 +1,63 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta charset="utf-8"><meta name="X-UA-Compatible" content="IE=edge"><meta name="author" content="2js56,2js56666@gmail.com"><title>xss靶场通关记录 · 2js56's blog</title><meta name="description" content="xss
+0x00第一关，就是一个常规的payload
+
+0x01将textarea闭合即可
+
+0x02同理，将引号闭合，构造payload
+
+0x03过滤了中括号和小括号，用反引号代替即可
+
+0x04这里用到的时onerror，一旦有出错就会执行其中的js代码，所以这里让img中的图片地址为空，它找"><meta name="keywords" content="Hexo,HTML,CSS,web,Linux"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="renderer" content="webkit"><link rel="short icon" href="/images/favicon.png" type="image/x-icon"><link rel="stylesheet" href="/css/style.css"><link rel="stylesheet" href="/css/blog_basic.css"><link rel="stylesheet" href="/css/font-awesome.min.css"><link rel="alternate" type="application/atom+xml" title="ATOM 1.0" href="/atom.xml"><meta name="generator" content="Hexo 6.3.0"></head><body><div class="sidebar animated fadeInDown"><div class="logo-title"><div class="title"><img src="/images/logo@2x.png" style="width:127px;"><h3 title=""><a href="/">2js56's blog</a></h3><div class="description"><p>love 林海青</p></div></div></div><ul class="social-links"><li><a target="_blank" rel="noopener" href="http://github.com/2js56"><i class="fa fa-github"></i></a></li></ul><div class="footer"><a target="_blank" href="/"><span>Theme by </span></a><a target="_blank" rel="noopener" href="https://www.caicai.me"> CaiCai </a><span>&</span><a target="_blank" rel="noopener" href="https://github.com/Ben02/hexo-theme-Anatole"> Ben</a><div class="by_farbox"><a href="https://hexo.io/zh-cn/" target="_blank">Proudly published with Hexo&#65281;</a></div></div></div><div class="main"><div class="page-top animated fadeInDown"><div class="nav"><li><a href="/">Home</a></li><li><a href="/about">Sobre</a></li><li><a href="/archives">Archivo</a></li><li><a href="/links">Enlaces</a></li></div><div class="information"><div class="back_btn"><li><a class="fa fa-chevron-left" onclick="window.history.go(-1)"> </a></li></div><div class="avatar"><img src="/images/touxiang.png"></div></div></div><div class="autopagerize_page_element"><div class="content"><div class="post-page"><div class="post animated fadeInDown"><div class="post-title"><h3><a>xss靶场通关记录</a></h3></div><div class="post-content"><h1 id="xss"><a href="#xss" class="headerlink" title="xss"></a>xss</h1><p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/1615792108_604f07ec4e726b75e509f.png!small" alt="img"></p>
+<h2 id="0x00"><a href="#0x00" class="headerlink" title="0x00"></a>0x00</h2><p>第一关，就是一个常规的payload</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220322221603159.png"></p>
+<h2 id="0x01"><a href="#0x01" class="headerlink" title="0x01"></a>0x01</h2><p>将textarea闭合即可</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323003708041.png" alt="image-20220323003708041"></p>
+<h2 id="0x02"><a href="#0x02" class="headerlink" title="0x02"></a>0x02</h2><p>同理，将引号闭合，构造payload</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323004008131.png" alt="image-20220323004008131"></p>
+<h2 id="0x03"><a href="#0x03" class="headerlink" title="0x03"></a>0x03</h2><p>过滤了中括号和小括号，用反引号代替即可</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323004428110.png" alt="image-20220323004428110"></p>
+<h2 id="0x04"><a href="#0x04" class="headerlink" title="0x04"></a>0x04</h2><p>这里用到的时onerror，一旦有出错就会执行其中的js代码，所以这里让img中的图片地址为空，它找不到图片就出错，能够成功执行js代码可以看到这里<a href=""></a>&#96;都被过滤了。于是只好将其Unicode一下</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323005547618.png" alt="image-20220323005547618"></p>
+<p><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20220323005524656.png" alt="image-20220323005524656"></p>
+<h2 id="0x05"><a href="#0x05" class="headerlink" title="0x05"></a>0x05</h2><p>可以看到源码注释符的闭合–&gt;被替换为笑哭的emoji，后面才知道原来–!&gt;也是可以用来闭合的，那这就简单了</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323010045253.png" alt="image-20220323010045253"></p>
+<h2 id="0x06"><a href="#0x06" class="headerlink" title="0x06"></a>0x06</h2><p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323010521425.png" alt="image-20220323010521425"></p>
+<p>可以看到这三种类型均被过滤，中间的是以on开头，&#x3D;结尾的字符，这不刚好把我onerror&#x3D;给ban掉吗，那就只好这样了</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323010725357.png" alt="image-20220323010725357"></p>
+<h2 id="0x07"><a href="#0x07" class="headerlink" title="0x07"></a>0x07</h2><figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">function render (input) &#123;</span><br><span class="line">  const stripTagsRe = /&lt;\/?[^&gt;]+&gt;/gi</span><br><span class="line"></span><br><span class="line">  input = input.replace(stripTagsRe, &#x27;&#x27;)</span><br><span class="line">  return `<span class="tag">&lt;<span class="name">article</span>&gt;</span>$&#123;input&#125;<span class="tag">&lt;/<span class="name">article</span>&gt;</span>`</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>先分析源码，&lt;/,\是转义字符，所以这里表达的是&lt;&#x2F;而且&lt;包含在&lt;&#x2F;中也会被匹配，而^代表取反，这里的用法是除了^字符，总的来说意思就是&lt;&#x2F;&gt;中除了^的所有字符都会被替换为空</p>
+<p>这就离谱了，但是当我试着构造payload的时候发现最后根本就不用闭合也可以成功<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323011516535.png" alt="image-20220323011516535"></p>
+<h2 id="0x08"><a href="#0x08" class="headerlink" title="0x08"></a>0x08</h2><p>这里很明显是过滤了</style>防止我闭合它，这很简单，用空格绕开正则匹配即可<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323011747590.png" alt="image-20220323011747590"></p>
+<h2 id="0x09"><a href="#0x09" class="headerlink" title="0x09"></a>0x09</h2><p>这题就是要求指定一个特定的URL，按照要求指定即可</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323012050543.png" alt="image-20220323012050543"></p>
+<p>这是一个白名单验证，我在网上看到一个有趣的思路</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323012530320.png" alt="image-20220323012530320"></p>
+<p>在网址后面随便加个东西让他错误，这样也算对</p>
+<h2 id="0x0A"><a href="#0x0A" class="headerlink" title="0x0A"></a>0x0A</h2><p>这题是完全没思路了，看来大佬的wp，了解到，当两个url用@连接时，访问到的是后者，且网站目录下有题目作者自己写的js文件，</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.segmentfault.com@xss.haozi.me/j.js</span><br></pre></td></tr></table></figure>
+
+<h2 id="0x0B"><a href="#0x0B" class="headerlink" title="0x0B"></a>0x0B</h2><p>查看源码发现所有的字符都会被变成大写，HTML对大小写不敏感，但是js对大小写敏感，所以将js代码部分就行编码即可</p>
+<p><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20220323013310025.png" alt="image-20220323013310025"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323013329308.png" alt="image-20220323013329308"></p>
+<h2 id="0x0C"><a href="#0x0C" class="headerlink" title="0x0C"></a>0x0C</h2><p>这关多过滤了一个script，但是我寻思着我上关也没用着script啊，它没防到onerror的方式，直接使用上关payload</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">onerror</span>=<span class="string">&quot;<span class="symbol">&amp;#97;</span><span class="symbol">&amp;#108;</span><span class="symbol">&amp;#101;</span><span class="symbol">&amp;#114;</span><span class="symbol">&amp;#116;</span><span class="symbol">&amp;#40;</span><span class="symbol">&amp;#49;</span><span class="symbol">&amp;#41;</span>&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x0D"><a href="#0x0D" class="headerlink" title="0x0D"></a>0x0D</h2><p>这题给了个alert却给我注释了，那我直接换行，这样就没注释了hhh，直接输入一个alert(1),但是反现后面跟着多余的’)，直接注释掉就行<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323014743740.png" alt="image-20220323014743740"></p>
+<h2 id="0x0E"><a href="#0x0E" class="headerlink" title="0x0E"></a>0x0E</h2><p>这题啥都过滤完了，直接给我整懵逼了，于是只好看大佬的wp，结果是一个奇怪的符号ſ的大写是s</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;ſcript <span class="attr">src</span>=<span class="string">&quot;https://xss.haozi.me/j.js&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="0x0F"><a href="#0x0F" class="headerlink" title="0x0F"></a>0x0F</h2><p>他这个将字符编码感觉没啥用啊，反正编码后的代码处于html标签中，一样的会被还原成正常的样子执行，所有直接进行常规的构造即可<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323015538671.png" alt="image-20220323015538671"></p>
+<h2 id="0x10"><a href="#0x10" class="headerlink" title="0x10"></a>0x10</h2><p>比较简单，就正常构造</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323015710395.png" alt="image-20220323015710395"></p>
+<h2 id="0x11"><a href="#0x11" class="headerlink" title="0x11"></a>0x11</h2><p>看起来是转义了很多字符，但是有个问题，就是&#x2F;&#x2F;被转义过后变成了//但是其实也还是注释符号，于是<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323020031247.png" alt="image-20220323020031247"></p>
+<h2 id="0x12"><a href="#0x12" class="headerlink" title="0x12"></a>0x12</h2><p>这里双引号被转义防止我们闭合，于是用转义字符加在了双引号前面吗，构造出paylaod</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">\&quot;);alert(1);//</span><br></pre></td></tr></table></figure>
+
+<p>还看到一种方法，直接用</script>闭合标签</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;/<span class="name">script</span>&gt;</span><span class="tag">&lt;<span class="name">script</span>&gt;</span>alert(1)<span class="tag">&lt;/<span class="name">script</span>&gt;</span>//<span class="tag">&lt;<span class="name">script</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>至此大功告成</p>
+</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-06-29</span><i class="fa fa-tag"></i><a class="tag" href="/tags/web基础/" title="web基础">web基础 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,http://example.com/2022/06/29/xss/,2js56's blog,xss靶场通关记录,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="next pagbuttons"><a class="btn" role="navigation" href="/2022/05/24/web%E5%9F%BA%E7%A1%80%E6%BC%8F%E6%B4%9E%E4%B9%8BPHP%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96/" title="web基础漏洞之PHP反序列化">Post siguiente</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
