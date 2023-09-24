@@ -18,7 +18,6 @@
 <p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323004428110.png" alt="image-20220323004428110"></p>
 <h2 id="0x04"><a href="#0x04" class="headerlink" title="0x04"></a>0x04</h2><p>这里用到的时onerror，一旦有出错就会执行其中的js代码，所以这里让img中的图片地址为空，它找不到图片就出错，能够成功执行js代码可以看到这里<a href=""></a>&#96;都被过滤了。于是只好将其Unicode一下</p>
 <p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323005547618.png" alt="image-20220323005547618"></p>
-<p><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20220323005524656.png" alt="image-20220323005524656"></p>
 <h2 id="0x05"><a href="#0x05" class="headerlink" title="0x05"></a>0x05</h2><p>可以看到源码注释符的闭合–&gt;被替换为笑哭的emoji，后面才知道原来–!&gt;也是可以用来闭合的，那这就简单了</p>
 <p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323010045253.png" alt="image-20220323010045253"></p>
 <h2 id="0x06"><a href="#0x06" class="headerlink" title="0x06"></a>0x06</h2><p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323010521425.png" alt="image-20220323010521425"></p>
@@ -38,7 +37,7 @@
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">https://www.segmentfault.com@xss.haozi.me/j.js</span><br></pre></td></tr></table></figure>
 
 <h2 id="0x0B"><a href="#0x0B" class="headerlink" title="0x0B"></a>0x0B</h2><p>查看源码发现所有的字符都会被变成大写，HTML对大小写不敏感，但是js对大小写敏感，所以将js代码部分就行编码即可</p>
-<p><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20220323013310025.png" alt="image-20220323013310025"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323013310025.png" alt="image-20220323013310025"></p>
 <p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323013329308.png" alt="image-20220323013329308"></p>
 <h2 id="0x0C"><a href="#0x0C" class="headerlink" title="0x0C"></a>0x0C</h2><p>这关多过滤了一个script，但是我寻思着我上关也没用着script啊，它没防到onerror的方式，直接使用上关payload</p>
 <figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">img</span> <span class="attr">src</span>=<span class="string">&quot;&quot;</span> <span class="attr">onerror</span>=<span class="string">&quot;<span class="symbol">&amp;#97;</span><span class="symbol">&amp;#108;</span><span class="symbol">&amp;#101;</span><span class="symbol">&amp;#114;</span><span class="symbol">&amp;#116;</span><span class="symbol">&amp;#40;</span><span class="symbol">&amp;#49;</span><span class="symbol">&amp;#41;</span>&quot;</span>&gt;</span></span><br></pre></td></tr></table></figure>
